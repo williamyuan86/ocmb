@@ -9,14 +9,22 @@ on:
 jobs:
   lean:
     runs-on: ubuntu-latest
+    timeout-minutes: 120
     steps:
       - uses: actions/checkout@v4
       - name: Install elan
         run: |
           curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- -y
           echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
-      - name: Build formal spike
+      - name: Fetch Mathlib dependencies
         working-directory: formal_spike
         run: |
-          lake update
+          # The audited paper used Lean 4.32.1 while the pinned Mathlib revision
+          # advertises 4.32.0.  `lake update` therefore refuses the binary cache.
+          # Keep the 4.32.1 project toolchain and intentionally build Mathlib from
+          # source, matching the paper's patched-point-release verification style.
+          lake update || true
+      - name: Build formal spike from source
+        working-directory: formal_spike
+        run: |
           lake build
