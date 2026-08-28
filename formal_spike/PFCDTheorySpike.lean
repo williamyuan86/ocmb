@@ -4,6 +4,8 @@ open Set MeasureTheory
 
 namespace PFCDTheorySpike
 
+noncomputable section
+
 /-!
 # T2′: discovery width
 
@@ -78,7 +80,7 @@ theorem t2prime_protected_aux
   · intro p hp
     exact Finset.mem_union_left aux (hParents hp)
   · calc
-      (safe ∪ aux).card ≤ safe.card + aux.card := Finset.card_union_le
+      (safe ∪ aux).card ≤ safe.card + aux.card := Finset.card_union_le safe aux
       _ ≤ width + qAux := Nat.add_le_add hSafeWidth hAux
 
 end T2Prime
